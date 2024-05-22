@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - 'main'
+
+name: Deploy
+
+jobs: 
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Executing docker compose build and update
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd /home/${{ secrets.USERNAME }}/subquery-indexer/;
+          git reset --hard;
+          git pull --rebase;
+          docker system prune -f;
+          docker compose -f docker-compose.production.yml build --force-rm --no-cache --compress;
+          docker compose -f docker-compose.production.yml up -d;
+          docker compose ps -a

@@ -1,0 +1,18 @@
+FROM subquerynetwork/subql-node-cosmos:latest
+
+WORKDIR /app
+
+RUN apk add --no-cache g++ make py3-pip
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/ ./.yarn/
+RUN yarn workspaces focus --all
+
+COPY . .
+
+ARG ENV_FILE=.env.mainnet.sample
+COPY ${ENV_FILE} .env.local
+
+RUN yarn codegen
+RUN yarn build
+
+CMD ["-f=/app", "--db-schema=app", "--workers=4", "--batch-size=30", "--unfinalized-blocks=true"]
