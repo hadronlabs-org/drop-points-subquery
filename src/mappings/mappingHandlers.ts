@@ -158,6 +158,6 @@ export async function handleBondExecution(
     id: msg.msg.decodedMsg.sender,
     ref: referral,
     height: BigInt(msg.block.header.height),
-    date: new Date(msg.block.header.time.getTime())
+    ts: BigInt(msg.block.header.time.getTime())
   })).save();
 }

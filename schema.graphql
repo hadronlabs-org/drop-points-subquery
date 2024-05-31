@@ -15,5 +15,5 @@ type UserBond @entity{
   id: ID! 
   ref: String!,
   height: BigInt!,
-  date: Date!
+  ts: BigInt!
 }
