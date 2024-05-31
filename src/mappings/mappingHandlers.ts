@@ -1,5 +1,5 @@
 import { CosmosMessage, CosmosTransaction } from "@subql/types-cosmos";
-import { UserBalance } from "../types";
+import { UserBalance, UserBond } from "../types";
 import { config } from "../config";
 
 type BondExecuteMessageType = {
@@ -127,4 +127,37 @@ export async function handleCoin(
       }
     }    
   }
+}
+
+
+type ExecuteBondMessageType = {
+  type: string;
+  sender: string;
+  contract: string;
+  msg: {
+    bond?: {
+      ref: string;
+    };
+  };
+};
+
+export async function handleBondExecution(
+  msg: CosmosMessage<ExecuteBondMessageType>
+): Promise<void> {
+  logger.info(
+    `New Bond Execution at block ${msg.block.header.height.toString()}`
+  );
+  const referral = msg.msg.decodedMsg.msg.bond?.ref || "";
+
+  const prevUserBond = await UserBond.get(msg.msg.decodedMsg.sender);
+  if (prevUserBond) {
+    logger.info('User %s already bonded');
+    return;
+  }
+  await (UserBond.create({
+    id: msg.msg.decodedMsg.sender,
+    ref: referral,
+    height: BigInt(msg.block.header.height),
+    date: new Date(msg.block.header.time.getTime())
+  })).save();
 }
