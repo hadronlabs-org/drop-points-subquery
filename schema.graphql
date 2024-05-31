@@ -10,3 +10,10 @@ type UserBalance @entity {
   lastDate: Date!
   lastHeight: BigInt! @index
 }
+
+type UserBond @entity{
+  id: ID! 
+  ref: String!,
+  height: BigInt!,
+  date: Date!
+}
