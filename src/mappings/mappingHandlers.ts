@@ -148,7 +148,10 @@ export async function handleBondExecution(
     `New Bond Execution at block ${msg.block.header.height.toString()}`
   );
   const referral = msg.msg.decodedMsg.msg.bond?.ref || "";
-
+  if (referral === msg.msg.decodedMsg.sender) {
+    logger.info('User cannot refer himself');
+    return;
+  }
   const prevUserBond = await UserBond.get(msg.msg.decodedMsg.sender);
   if (prevUserBond) {
     logger.info('User %s already bonded');
