@@ -1,5 +1,5 @@
-import { CosmosMessage, CosmosTransaction } from "@subql/types-cosmos";
-import { UserBalance, UserBond } from "../types";
+import { CosmosEvent, CosmosMessage, CosmosTransaction } from "@subql/types-cosmos";
+import { PoolPosition, UserBalance, UserBond } from "../types";
 import { config } from "../config";
 
 type BondExecuteMessageType = {
@@ -163,4 +163,37 @@ export async function handleBondExecution(
     height: BigInt(msg.block.header.height),
     ts: BigInt(msg.block.header.time.getTime())
   })).save();
+}
+
+export async function handleCreatePosition(
+  input: CosmosEvent,
+): Promise<void> {
+  const { event } = input;
+  const attributes: Record<string, string> = event.attributes.reduce((acc, { key, value }) => ({...acc, [key]: value}), {});
+  const poolId = attributes.pool_id || '';
+  const positionId = attributes.position_id || '';
+  if (attributes.module !== 'concentratedliquidity' || !poolId || !positionId || poolId !== config["osmosis-1"].poolId) {
+    return;
+  }
+  const id = poolId + '_' + positionId;
+  await PoolPosition.create({
+    id,
+    height: BigInt(input.block.header.height),
+    created: new Date(input.block.header.time.getTime()),
+  }).save();
+  logger.info('Position %s added', id);
+}
+export async function handleRemovePosition(
+  input: CosmosEvent
+): Promise<void> {
+  const { event } = input;
+  const attributes: Record<string, string> = event.attributes.reduce((acc, { key, value }) => ({...acc, [key]: value}), {});
+  const poolId = attributes.pool_id || '';
+  const positionId = attributes.position_id || '';
+  if (attributes.module !== 'concentratedliquidity' || !poolId || !positionId || poolId !== config["osmosis-1"].poolId) {
+    return;
+  }
+  const id = poolId + '_' + positionId;
+  await PoolPosition.remove(id);
+  logger.info('Position %s removed', id);
 }
