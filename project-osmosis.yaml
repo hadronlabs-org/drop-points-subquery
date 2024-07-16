@@ -13,13 +13,41 @@ schema:
   file: ./schema.graphql
 network:
   chainId: osmosis-1
+  chaintypes:
+    osmosis.concentratedliquidity.v1beta1:
+      file: ./proto/osmosis/concentratedliquidity/v1beta1/tx.proto
+      messages:
+        - MsgWithdrawPosition
+        - MsgCreatePosition
+        - MsgAddToPosition
+    osmosis.superfluid:
+      file: ./proto/osmosis/superfluid/tx.proto
+      messages:
+        - MsgCreateFullRangePositionAndSuperfluidDelegate
+    cosmos.base.v1beta1:
+      file: ./proto/cosmos/base/v1beta1/coin.proto
+      messages:
+        - Coin
   endpoint:
     - https://osmosis-rpc.publicnode.com/
+    # - https://osmosis-rpc.polkachu.com/
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 15952063
+    startBlock: 17154300
     mapping:
       file: ./dist/index.js
       handlers:
         - handler: handleCoin
           kind: cosmos/TransactionHandler
+        - handler: handleCreatePosition
+          kind: cosmos/EventHandler
+          filter:
+            type: create_position
+            attributes:
+              module: concentratedliquidity
+        - handler: handleRemovePosition
+          kind: cosmos/EventHandler
+          filter:
+            type: withdraw_position
+            attributes:
+              module: concentratedliquidity
