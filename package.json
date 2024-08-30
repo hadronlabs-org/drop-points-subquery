@@ -7,7 +7,7 @@
     "build": "subql build",
     "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
-    "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
+    "_dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && npm run build",
     "test": "jest"
   },
@@ -22,16 +22,16 @@
   "license": "MIT",
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
-    "@cosmjs/stargate": "^0.28.9",
-    "@subql/cli": "^4.10.0",
-    "@subql/node-cosmos": "latest",
-    "@subql/testing": "latest",
+    "@cosmjs/stargate": "0.32.4",
+    "@subql/cli": "5.2.4",
+    "@subql/node-cosmos": "4.1.1",
+    "@subql/testing": "2.2.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@subql/types-cosmos": "latest",
+    "@subql/types-cosmos": "3.5.2",
     "@subql/utils": "^2.7.0",
-    "@types/node": "^17.0.21",
+    "@types/node": "22.2.0",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",
     "tslib": "^2.3.1"

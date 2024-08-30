@@ -1,5 +1,7 @@
 version: "3"
 
+volumes:
+  db:
 services:
   postgres:
     build:
@@ -8,7 +10,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - .data/postgres:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
     healthcheck:
@@ -17,58 +19,58 @@ services:
       timeout: 5s
       retries: 5
 
-  subquery-node-osmosis:
-    image: subquerynetwork/subql-node-cosmos:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
-    restart: always
-    environment:
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_DATABASE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-    volumes:
-      - ./:/app
-    command:
-      - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
-      - -f=/app/project-osmosis.yaml
-      - --multi-chain
-      - --db-schema=multi-transfers
-      - --disable-historical
-      - --batch-size=30
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node-osmosis:3000/ready"]
-      interval: 3s
-      timeout: 5s
-      retries: 10
-  subquery-node-secret:
-    image: subquerynetwork/subql-node-cosmos:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
-    restart: always
-    environment:
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_DATABASE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-    volumes:
-      - ./:/app
-    command:
-      - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
-      - -f=/app/project-secret.yaml
-      - --multi-chain
-      - --db-schema=multi-transfers
-      - --disable-historical
-      - --batch-size=30
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node-secret:3000/ready"]
-      interval: 3s
-      timeout: 5s
-      retries: 10
+  # subquery-node-osmosis:
+  #   image: subquerynetwork/subql-node-cosmos:latest
+  #   depends_on:
+  #     "postgres":
+  #       condition: service_healthy
+  #   restart: always
+  #   environment:
+  #     DB_USER: postgres
+  #     DB_PASS: postgres
+  #     DB_DATABASE: postgres
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #   volumes:
+  #     - ./:/app
+  #   command:
+  #     - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
+  #     - -f=/app/project-osmosis.yaml
+  #     - --multi-chain
+  #     - --db-schema=multi-transfers
+  #     - --disable-historical
+  #     - --batch-size=30
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://subquery-node-osmosis:3000/ready"]
+  #     interval: 3s
+  #     timeout: 5s
+  #     retries: 10
+  # subquery-node-secret:
+  #   image: subquerynetwork/subql-node-cosmos:latest
+  #   depends_on:
+  #     "postgres":
+  #       condition: service_healthy
+  #   restart: always
+  #   environment:
+  #     DB_USER: postgres
+  #     DB_PASS: postgres
+  #     DB_DATABASE: postgres
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #   volumes:
+  #     - ./:/app
+  #   command:
+  #     - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
+  #     - -f=/app/project-secret.yaml
+  #     - --multi-chain
+  #     - --db-schema=multi-transfers
+  #     - --disable-historical
+  #     - --batch-size=30
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://subquery-node-secret:3000/ready"]
+  #     interval: 3s
+  #     timeout: 5s
+  #     retries: 10
 
   subquery-node-neutron:
     image: subquerynetwork/subql-node-cosmos:latest
@@ -91,6 +93,8 @@ services:
       - --db-schema=multi-transfers
       - --disable-historical
       - --batch-size=30
+      - --debug 
+      - --log-level=trace
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-neutron:3000/ready"]
       interval: 3s

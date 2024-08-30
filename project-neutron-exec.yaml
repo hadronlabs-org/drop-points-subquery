@@ -12,21 +12,19 @@ runner:
 schema:
   file: ./schema.graphql
 network:
-  chainId: pion-1
+  chainId: neutron-1
   endpoint:
-    - https://rpc-lb-pion.ntrn.tech"
-    - https://rpc-falcron.pion-1.ntrn.tech
+    - https://neutron-rpc.polkachu.com/
+    - https://rpc-kralum.neutron-1.neutron.org/
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 15450000
+    startBlock: 13864000
     mapping:
       file: ./dist/index.js
       handlers:
         - handler: handleBondExecution
-          kind: cosmos/MessageHandler
+          kind: cosmos/EventHandler
           filter:
-            type: /cosmwasm.wasm.v1.MsgExecuteContract
-            includeFailedTx: true
-            contractCall: bond
-            values:
-              contract: 'neutron1frz8scdmukvp399kvpldtwvqjd3pyalym5qpfvyxm0dry27r5s6q6f36sc'
+            type: 'wasm-crates.io:drop-staking__drop-core-execute-bond'
+            attributes:
+              action: bond
