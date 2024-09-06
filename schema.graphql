@@ -8,3 +8,12 @@ type UserBond @entity{
   height: BigInt!,
   ts: BigInt!
 }
+
+type UserBondPlain @entity{
+  id: ID! 
+  address: String! @index
+  ref: String! @index,
+  received: BigInt!
+  height: BigInt!
+  exchange_rate: Float!
+}

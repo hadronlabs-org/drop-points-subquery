@@ -1,5 +1,6 @@
 import { CosmosEvent, CosmosMessage, CosmosTransaction } from "@subql/types-cosmos";
-import { UserBond } from "../types";
+import { UserBond, UserBondPlain } from "../types";
+import { parse } from "path";
 
 
 export async function handleBondExecution(
@@ -8,6 +9,18 @@ export async function handleBondExecution(
   const { attributes } = input.event;
   const receiver = attributes.find((attr) => attr.key === "receiver")?.value;
   const ref = attributes.find((attr) => attr.key === "ref")?.value;
+  const received = attributes.find((attr) => attr.key === "issue_amount")?.value;
+  const exchange_rate = attributes.find((attr) => attr.key === "exchange_rate")?.value;
+  await UserBondPlain.create(
+    {
+      id: input.tx.hash,
+      address: (receiver || '').toString(),
+      ref: (ref || '').toString(),
+      received: BigInt((received || '0').toString()),
+      height: BigInt(input.tx.block.header.height),
+      exchange_rate: parseFloat((exchange_rate || '0').toString()),
+    }
+  ).save();
   if (!receiver) {
     logger.error("receiver not found in attributes");
     return;
