@@ -2,15 +2,6 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type UserBalance @entity {
-  id: ID! # Index
-  balance: BigInt!
-  denom: String!, @index
-  chainId: String!, @index
-  lastDate: Date!
-  lastHeight: BigInt! @index
-}
-
 type UserBond @entity{
   id: ID! 
   ref: String!,
@@ -18,8 +9,11 @@ type UserBond @entity{
   ts: BigInt!
 }
 
-type PoolPosition @entity{
-  id: ID!
-  created: Date!
+type UserBondPlain @entity{
+  id: ID! 
+  address: String! @index
+  ref: String! @index,
+  received: BigInt!
   height: BigInt!
+  exchange_rate: Float!
 }
