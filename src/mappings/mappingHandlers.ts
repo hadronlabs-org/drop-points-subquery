@@ -34,7 +34,7 @@ export async function handleBondExecution(
     return;
   }
   const prevUserBond = await UserBond.get(receiver.toString());
-  if (prevUserBond) {
+  if (prevUserBond && receiver) {
     logger.warn('User %s already bonded');
     return;
   }

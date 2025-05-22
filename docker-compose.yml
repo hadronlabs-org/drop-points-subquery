@@ -92,7 +92,7 @@ services:
       - --multi-chain
       - --db-schema=multi-transfers
       - --disable-historical
-      - --batch-size=30
+      - --batch-size=60
       - --debug 
       - --log-level=trace
     healthcheck:

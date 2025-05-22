@@ -16,9 +16,13 @@ network:
   endpoint:
     - https://neutron-rpc.polkachu.com/
     - https://rpc-kralum.neutron-1.neutron.org/
+    - https://rpc-vertexa.neutron-1.neutron.org/
+    - https://rpc-solara.neutron-1.neutron.org/
+    - https://rpc-pulsarix.neutron-1.neutron.org/
+    - https://rpc-voidara.neutron-1.neutron.org/
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 13864000
+    startBlock: 13340425
     mapping:
       file: ./dist/index.js
       handlers:
